@@ -1,7 +1,11 @@
+"use client";
+import { supabase } from "@/lib/supabase/client";
+import { useEffect } from "react";
+
 export default function Home() {
-  return (
-    <div className="flex items-center justify-center h-screen bg-black text-white">
-      Tailwind funcionando 🚀
-    </div>
-  );
+  useEffect(() => {
+    console.log("Supabase:", supabase);
+  }, []);
+
+  return <div>Supabase conectado 🚀</div>;
 }
