@@ -20,22 +20,31 @@ export default function AuthCard() {
         setLoading(true);
         setError(null);
 
-        const fn =
+        const result =
             mode === "login"
-                ? supabase.auth.signInWithPassword
-                : supabase.auth.signUp;
-
-        const { error } = await fn({ email, password });
+                ? await supabase.auth.signInWithPassword({ email, password })
+                : await supabase.auth.signUp({ email, password });
 
         setLoading(false);
 
-        if (error) {
-            setError(error.message);
+        if (result.error) {
+            setError(result.error.message);
             return;
         }
 
-        router.refresh();
+        // 👇 isso aqui tira 100% da dúvida
+        const session = result.data.session;
+
+        // Se for signup e a confirmação estiver ligada, session pode ser null
+        if (!session) {
+            setError(
+                "Conta criada, mas sem sessão. Provavelmente o Supabase está exigindo confirmação por e-mail. Confirme o e-mail ou desative a confirmação no painel."
+            );
+            return;
+        }
+
         router.push("/");
+        router.refresh();
     }
 
     return (
